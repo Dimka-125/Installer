@@ -1,57 +1,70 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Installer {
+    // StringBuilder для логирования
+    private static final StringBuilder log = new StringBuilder();
+
     public static void main(String[] args) {
-
-        StringBuilder log = new StringBuilder();
-
-
+        // Путь к директории
         String gamesPath = "C://Games"; // Для Windows
 
+        // Список директорий
+        ArrayList<String> directories = new ArrayList<>();
+        directories.add(gamesPath);
+        directories.add(gamesPath + "/src");
+        directories.add(gamesPath + "/src/main");
+        directories.add(gamesPath + "/src/test");
+        directories.add(gamesPath + "/res");
+        directories.add(gamesPath + "/res/drawables");
+        directories.add(gamesPath + "/res/vectors");
+        directories.add(gamesPath + "/res/icons");
+        directories.add(gamesPath + "/savegames");
+        directories.add(gamesPath + "/temp");
 
-        //  Директория Games
-        File gamesDir = new File(gamesPath);
-        if (!gamesDir.exists()) {
-            boolean created = gamesDir.mkdir();
-            if (created) {
-                log.append("Директория ").append(gamesDir.getAbsolutePath()).append(" успешно создана.\n");
+        // Список файлов
+        ArrayList<String> files = new ArrayList<>();
+        files.add(gamesPath + "/src/main/Main.java");
+        files.add(gamesPath + "/src/main/Utils.java");
+        files.add(gamesPath + "/temp/temp.txt");
+
+        // Создаем директории
+        createDirectories(directories);
+
+        // Создаем файлы
+        createFiles(files);
+
+        // Записываем лог в файл
+        writeLogToFile(gamesPath + "/temp/temp.txt", log.toString());
+    }
+
+
+    // Метод для  директорий
+
+    private static void createDirectories(ArrayList<String> directories) {
+        for (String path : directories) {
+            File dir = new File(path);
+            if (!dir.exists()) {
+                boolean created = dir.mkdir();
+                if (created) {
+                    log.append("Директория ").append(dir.getAbsolutePath()).append(" успешно создана.\n");
+                } else {
+                    log.append("Не удалось создать директорию ").append(dir.getAbsolutePath()).append(".\n");
+                }
             } else {
-                log.append("Не удалось создать директорию ").append(gamesDir.getAbsolutePath()).append(".\n");
-            }
-        } else {
-            log.append("Директория ").append(gamesDir.getAbsolutePath()).append(" уже существует.\n");
-        }
-
-        // Папки в Games
-        String[] subDirs = {"src", "res", "savegames", "temp"};
-        for (String dirName : subDirs) {
-            File subDir = new File(gamesDir, dirName);
-            if (subDir.mkdir()) {
-                log.append("Директория ").append(subDir.getAbsolutePath()).append(" успешно создана.\n");
-            } else {
-                log.append("Не удалось создать директорию ").append(subDir.getAbsolutePath()).append(".\n");
+                log.append("Директория ").append(dir.getAbsolutePath()).append(" уже существует.\n");
             }
         }
+    }
 
-        // Папки в src: main, test
-        File srcDir = new File(gamesDir, "src");
-        String[] srcSubDirs = {"main", "test"};
-        for (String dirName : srcSubDirs) {
-            File subDir = new File(srcDir, dirName);
-            if (subDir.mkdir()) {
-                log.append("Директория ").append(subDir.getAbsolutePath()).append(" успешно создана.\n");
-            } else {
-                log.append("Не удалось создать директорию ").append(subDir.getAbsolutePath()).append(".\n");
-            }
-        }
 
-        // Создаем файлы в src/main
-        File mainDir = new File(srcDir, "main");
-        String[] mainFiles = {"Main.java", "Utils.java"};
-        for (String fileName : mainFiles) {
-            File file = new File(mainDir, fileName);
+    // Метод для  файлов
+
+    private static void createFiles(ArrayList<String> files) {
+        for (String path : files) {
+            File file = new File(path);
             try {
                 if (file.createNewFile()) {
                     log.append("Файл ").append(file.getAbsolutePath()).append(" успешно создан.\n");
@@ -62,36 +75,16 @@ public class Installer {
                 log.append("Ошибка при создании файла ").append(file.getAbsolutePath()).append(": ").append(e.getMessage()).append(".\n");
             }
         }
+    }
 
-        // Папки в res: drawables, vectors, icons
-        File resDir = new File(gamesDir, "res");
-        String[] resSubDirs = {"drawables", "vectors", "icons"};
-        for (String dirName : resSubDirs) {
-            File subDir = new File(resDir, dirName);
-            if (subDir.mkdir()) {
-                log.append("Директория ").append(subDir.getAbsolutePath()).append(" успешно создана.\n");
-            } else {
-                log.append("Не удалось создать директорию ").append(subDir.getAbsolutePath()).append(".\n");
-            }
-        }
 
-        // Файл temp.txt в директории temp
-        File tempDir = new File(gamesDir, "temp");
-        File tempFile = new File(tempDir, "temp.txt");
-        try {
-            if (tempFile.createNewFile()) {
-                log.append("Файл ").append(tempFile.getAbsolutePath()).append(" успешно создан.\n");
-            } else {
-                log.append("Не удалось создать файл ").append(tempFile.getAbsolutePath()).append(".\n");
-            }
-        } catch (IOException e) {
-            log.append("Ошибка при создании файла ").append(tempFile.getAbsolutePath()).append(": ").append(e.getMessage()).append(".\n");
-        }
+    //Метод для записи лога
 
-        // Логирование в файл temp.txt
-        try (FileWriter writer = new FileWriter(tempFile)) {
-            writer.write(log.toString());
-            System.out.println("Лог успешно записан в файл " + tempFile.getAbsolutePath());
+    private static void writeLogToFile(String filePath, String logContent) {
+        File file = new File(filePath);
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write(logContent);
+            System.out.println("Лог успешно записан в файл " + file.getAbsolutePath());
         } catch (IOException e) {
             System.out.println("Ошибка при записи лога в файл: " + e.getMessage());
         }

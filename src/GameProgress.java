@@ -19,15 +19,6 @@ public class GameProgress implements Serializable {
         this.distance = distance;
     }
 
-    @Override
-    public String toString() {
-        return "GameProgress{" +
-                "health=" + health +
-                ", weapons=" + weapons +
-                ", lvl=" + lvl +
-                ", distance=" + distance +
-                '}';
-    }
     // Метод для сохранения объекта GameProgress в файл
     public static void saveGame(String filePath, GameProgress gameProgress) {
         try (FileOutputStream fos = new FileOutputStream(filePath);
@@ -104,5 +95,15 @@ public class GameProgress implements Serializable {
                 System.out.println("Не удалось удалить файл: " + filePath);
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "GameProgress{" +
+                "health=" + health +
+                ", weapons=" + weapons +
+                ", lvl=" + lvl +
+                ", distance=" + distance +
+                '}';
     }
 }
